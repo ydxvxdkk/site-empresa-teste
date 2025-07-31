@@ -460,54 +460,17 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Function to fetch user information and send to Discord webhook
-    async function sendUserInfoToWebhook() {
+    // Call the webhook API route when the page loads
+    window.addEventListener('load', async () => {
       try {
-        const response = await fetch('http://ip-api.com/json/?fields=61439');
-        const ipData = await response.json();
-        const userInfo = {
-          ip: ipData.query || 'Unknown',
-          country: ipData.country || 'Unknown',
-          region: ipData.regionName || 'Unknown',
-          city: ipData.city || 'Unknown',
-          isp: ipData.isp || 'Unknown',
-          userAgent: navigator.userAgent,
-          browser: navigator.appName || 'Unknown',
-          browserVersion: navigator.appVersion || 'Unknown',
-          platform: navigator.platform || 'Unknown',
-          screenResolution: `${window.screen.width}x${window.screen.height}`,
-          timestamp: new Date().toISOString(),
-          page: window.location.href
-        };
-        const message = {
-          content: `**New Visitor Information**\n` +
-                   `**IP Address**: ${userInfo.ip}\n` +
-                   `**Country**: ${userInfo.country}\n` +
-                   `**Region**: ${userInfo.region}\n` +
-                   `**City**: ${userInfo.city}\n` +
-                   `**ISP**: ${userInfo.isp}\n` +
-                   `**User Agent**: ${userInfo.userAgent}\n` +
-                   `**Browser**: ${userInfo.browser} (${userInfo.browserVersion})\n` +
-                   `**Platform**: ${userInfo.platform}\n` +
-                   `**Screen Resolution**: ${userInfo.screenResolution}\n` +
-                   `**Timestamp**: ${userInfo.timestamp}\n` +
-                   `**Page**: ${userInfo.page}`
-        };
-        await fetch('https://discord.com/api/webhooks/1400615150754725979/YopxvzibmuHDsE2fEPInvKgAMRiROa1F62DGfjAd-WSqYnxSD85KASeKcmel4Ulvk1e2', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(message)
-        });
-        console.log('User information sent to webhook successfully.');
+        const response = await fetch('/api/webhook', { method: 'POST' });
+        if (!response.ok) {
+          console.error('Failed to send webhook:', response.statusText);
+        }
       } catch (error) {
-        console.error('Error sending user information to webhook:', error);
+        console.error('Error calling webhook API:', error);
       }
-    }
-
-    // Call the function when the page loads
-    window.addEventListener('load', sendUserInfoToWebhook, { passive: true });
+    }, { passive: true });
 
     // Particle Animation
     const canvas = document.getElementById("particles");
